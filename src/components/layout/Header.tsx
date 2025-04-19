@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import Navbar from "./Navbar";
 import MobileMenu from "./MobileMenu";
 import { IoIosMenu } from "react-icons/io";
+import { IoMdClose } from "react-icons/io";
+
 import { BsFillBookmarksFill } from "react-icons/bs";
 
 import Image from "next/image";
@@ -21,7 +23,11 @@ const Header = () => {
 							onClick={() => setIsOpen((prev) => !prev)}
 							className="cursor-pointer"
 						>
-							<IoIosMenu className=" text-3xl" />
+							{isOpen ? (
+								<IoMdClose className=" text-2xl" />
+							) : (
+								<IoIosMenu className=" text-2xl" />
+							)}
 						</button>
 						<MobileMenu isOpen={isOpen} />
 					</div>

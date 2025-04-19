@@ -1,6 +1,11 @@
+"use client";
 import { Button } from "@/components/ui/Button";
 import BG from "../../public/images/heroBg.png";
+import { useRouter } from "next/navigation";
+
 export default function Home() {
+	const router = useRouter();
+
 	return (
 		<div
 			style={{
@@ -21,7 +26,11 @@ export default function Home() {
 				<p className="text-md md:text-lg lg:text-xl font-bold text-gray-800 py-2">
 					Caring for You Like Family
 				</p>
-				<Button size="large" className="m-3">
+				<Button
+					size="large"
+					className="m-3"
+					onClick={() => router.push("/doctors")}
+				>
 					Discover our Doctors
 				</Button>
 			</main>
