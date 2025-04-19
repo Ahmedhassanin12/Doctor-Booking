@@ -17,7 +17,7 @@ type BookingActions = {
   setSelectedTime: (time: string | null) => void;
   setIsModalOpen: (isOpen: boolean) => void;
   isTimeSlotBooked: (doctorId: string, dateTime: string) => boolean;
-
+  cancelAppointment: (index: number) => void
 }
 
 type BookingStore = BookingState & BookingActions
@@ -44,6 +44,9 @@ export const useBookingStore = createWithEqualityFn(
         appointment => appointment.doctorId === doctorId && appointment.dateTime === dateTime
       );
     },
+    cancelAppointment: (index) => set(state => {
+      state.appointments = state.appointments.filter((_el, idx) => index !== idx)
+    })
   })),
   shallow,
 );

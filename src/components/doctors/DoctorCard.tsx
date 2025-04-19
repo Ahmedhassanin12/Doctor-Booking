@@ -1,15 +1,13 @@
 import Image from "next/image";
 import type { Doctor } from "@/types/doctor.type";
 import { Button } from "../ui/Button";
-import { useBookingStore } from "@/store/useBookingStore";
 
 interface DoctorCardProps {
 	doctor: Doctor;
 	onBook: () => void;
+	hasAvailableSlots: boolean;
 }
-const DoctorCard = ({ doctor, onBook }: DoctorCardProps) => {
-	const isTimeSlotBooked = useBookingStore((state) => state.isTimeSlotBooked);
-
+const DoctorCard = ({ doctor, onBook, hasAvailableSlots }: DoctorCardProps) => {
 	const nextAvailability = doctor.availability[0]?.date
 		? new Date(doctor.availability[0].date).toLocaleDateString("en-US", {
 				weekday: "short",
@@ -17,13 +15,6 @@ const DoctorCard = ({ doctor, onBook }: DoctorCardProps) => {
 				day: "numeric",
 			})
 		: "No availability";
-
-	const hasAvailableSlots = doctor.availability.some((avail) =>
-		avail.times.some((time) => {
-			const fullDateTime = `${avail.date}T${time}:00`;
-			return !isTimeSlotBooked(doctor.id, fullDateTime);
-		}),
-	);
 
 	return (
 		<div className="bg-white rounded-lg shadow-md overflow-hidden">

@@ -50,7 +50,7 @@ const BookingModal = () => {
 
 	return (
 		<PopupModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-			<div className="bg-white rounded-lg p-6 w-full max-w-md">
+			<div className="bg-white rounded-lg p-2 m-2 w-full max-w-md">
 				<h2 id="modal-title" className="text-xl font-bold mb-4">
 					Book with {selectedDoctor.name}
 				</h2>

@@ -24,7 +24,7 @@ export function PopupModal(props: ModalProps) {
 			<div
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => e.stopPropagation()}
-				className={`bg-white rounded-lg shadow py-6 px-4 transition-all ${isOpen ? "scale-100 opacity-100" : "scale-125 opacity-0"} ${className}`}
+				className={`bg-white rounded-lg shadow p-3 transition-all ${isOpen ? "scale-100 opacity-100" : "scale-125 opacity-0"} ${className}`}
 			>
 				<button
 					type="button"
@@ -34,7 +34,7 @@ export function PopupModal(props: ModalProps) {
 					<span className="sr-only">Close</span>
 					<FiX size={20} className="cursor-pointer text-xl" />
 				</button>
-				<div className="py-4 px-2">{children}</div>
+				<div className="py-3 px-2">{children}</div>
 			</div>
 		</div>
 	);

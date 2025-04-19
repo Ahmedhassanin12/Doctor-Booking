@@ -17,10 +17,13 @@ const DoctorsModule = () => {
 		"doctors",
 	);
 
-	const [setSelectedDoctor, setIsModalOpen] = useBookingStore((state) => [
-		state.setSelectedDoctor,
-		state.setIsModalOpen,
-	]);
+	const [setSelectedDoctor, setIsModalOpen, isTimeSlotBooked] = useBookingStore(
+		(state) => [
+			state.setSelectedDoctor,
+			state.setIsModalOpen,
+			state.isTimeSlotBooked,
+		],
+	);
 
 	const {
 		filteredDoctors,
@@ -34,6 +37,16 @@ const DoctorsModule = () => {
 		setSelectedDoctor(doctor);
 		setIsModalOpen(true);
 	};
+
+	const hasAvailableSlots = (doctor: Doctor) => {
+		return doctor.availability.some((avail) =>
+			avail.times.some((time) => {
+				const fullDateTime = `${avail.date}T${time}:00`;
+				return !isTimeSlotBooked(doctor.id, fullDateTime);
+			}),
+		);
+	};
+
 	return (
 		<div className="flex items-center justify-center ">
 			<div className="min-h-[calc(100vh-93px)]  bg-gray-50 p-4 md:p-8  container rounded-lg">
@@ -84,6 +97,7 @@ const DoctorsModule = () => {
 									key={doctor.id}
 									doctor={doctor}
 									onBook={() => handleBookClick(doctor)}
+									hasAvailableSlots={hasAvailableSlots(doctor)}
 								/>
 							))}
 						</div>
