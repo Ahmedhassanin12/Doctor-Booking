@@ -1,8 +1,6 @@
 "use client";
 import DoctorCard from "@/components/doctors/DoctorCard";
 import { Button } from "@/components/ui/Button";
-import { DOCTORS } from "@/constants/doctors";
-import { SPECIALTIES } from "@/constants/specialties";
 import { useBookingStore } from "@/store/useBookingStore";
 import type { Doctor } from "@/types/doctor.type";
 import React, { useState } from "react";
@@ -10,20 +8,27 @@ import { AppointmentsList } from "./components/AppointmentsList";
 import BookingModal from "./components/BookingModal";
 import { IoMdCheckmark } from "react-icons/io";
 import { RiFilterOffLine } from "react-icons/ri";
+import { AvailabilityFilter } from "@/components/doctors/DoctorAvabilityFilter";
+import useFilterDoctors from "@/hooks/useFilterDoctors.hook";
+import DoctorSpecialtyFilter from "@/components/doctors/DoctorSpecialtyFilter";
 
 const DoctorsModule = () => {
 	const [activeTab, setActiveTab] = useState<"doctors" | "appointments">(
 		"doctors",
 	);
-	const [selectedSpecialty, setSelectedSpecialty] = useState<string>("");
+
 	const [setSelectedDoctor, setIsModalOpen] = useBookingStore((state) => [
 		state.setSelectedDoctor,
 		state.setIsModalOpen,
 	]);
 
-	const filteredDoctors = selectedSpecialty
-		? DOCTORS.filter((doctor) => doctor.specialty === selectedSpecialty)
-		: DOCTORS;
+	const {
+		filteredDoctors,
+		selectedAvailability,
+		setSelectedAvailability,
+		selectedSpecialty,
+		setSelectedSpecialty,
+	} = useFilterDoctors();
 
 	const handleBookClick = (doctor: Doctor) => {
 		setSelectedDoctor(doctor);
@@ -62,24 +67,15 @@ const DoctorsModule = () => {
 
 				{activeTab === "doctors" ? (
 					<>
-						<div className="mb-6 flex items-center gap-2">
-							<label htmlFor="specialty" className="block mb-2">
-								Filter by Specialty:
-							</label>
-							<select
-								id="specialty"
-								value={selectedSpecialty}
-								onChange={(e) => setSelectedSpecialty(e.target.value)}
-								className="p-2 border rounded"
-								aria-label="Filter doctors by specialty"
-							>
-								<option value="">All Specialties</option>
-								{SPECIALTIES.map((specialty) => (
-									<option key={specialty} value={specialty}>
-										{specialty}
-									</option>
-								))}
-							</select>
+						<div className="mb-6 flex items-center flex-wrap gap-2">
+							<DoctorSpecialtyFilter
+								selectedSpecialty={selectedSpecialty}
+								setSelectedSpecialty={setSelectedSpecialty}
+							/>
+							<AvailabilityFilter
+								selectedAvailability={selectedAvailability}
+								onAvailabilityChange={setSelectedAvailability}
+							/>
 						</div>
 
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">

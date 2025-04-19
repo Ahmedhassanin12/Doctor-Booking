@@ -20,8 +20,11 @@ export const AppointmentsList = () => {
 			className="flex items-center w-full gap-2"
 			aria-label="Your appointments"
 		>
-			{appointments.map((appointment) => (
-				<AppointmentCard key={appointment.dateTime} appointment={appointment} />
+			{appointments.map((appointment, index) => (
+				<AppointmentCard
+					key={`${appointment.dateTime + index}`}
+					appointment={appointment}
+				/>
 			))}
 		</div>
 	);

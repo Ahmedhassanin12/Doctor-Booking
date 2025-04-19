@@ -16,6 +16,8 @@ type BookingActions = {
   setSelectedDoctor: (doctor: Doctor | null) => void;
   setSelectedTime: (time: string | null) => void;
   setIsModalOpen: (isOpen: boolean) => void;
+  isTimeSlotBooked: (doctorId: string, dateTime: string) => boolean;
+
 }
 
 type BookingStore = BookingState & BookingActions
@@ -23,7 +25,7 @@ type BookingStore = BookingState & BookingActions
 const initialState: BookingState = { appointments: [], selectedDoctor: null, selectedTime: null, isModalOpen: false }
 
 export const useBookingStore = createWithEqualityFn(
-  mutative<BookingStore>((set) => ({
+  mutative<BookingStore>((set, get) => ({
     ...initialState,
     addAppointment: (appointment) => set((state) => {
       state.appointments = [...state.appointments, appointment]
@@ -36,7 +38,12 @@ export const useBookingStore = createWithEqualityFn(
     }),
     setIsModalOpen: (isOpen) => set((state) => {
       state.isModalOpen = isOpen
-    })
+    }),
+    isTimeSlotBooked: (doctorId, dateTime) => {
+      return get().appointments.some(
+        appointment => appointment.doctorId === doctorId && appointment.dateTime === dateTime
+      );
+    },
   })),
   shallow,
 );

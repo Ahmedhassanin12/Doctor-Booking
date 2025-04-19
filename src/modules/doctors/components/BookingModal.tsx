@@ -11,6 +11,7 @@ const BookingModal = () => {
 		setSelectedTime,
 		setIsModalOpen,
 		addAppointment,
+		isTimeSlotBooked,
 	] = useBookingStore((state) => [
 		state.selectedDoctor,
 		state.selectedTime,
@@ -18,6 +19,7 @@ const BookingModal = () => {
 		state.setSelectedTime,
 		state.setIsModalOpen,
 		state.addAppointment,
+		state.isTimeSlotBooked,
 	]);
 
 	if (!isModalOpen || !selectedDoctor) return null;
@@ -35,6 +37,17 @@ const BookingModal = () => {
 		}
 	};
 
+	const formatTimeSlot = (date: string, time: string) => {
+		const dateObj = new Date(`${date}T${time}:00`);
+		return dateObj.toLocaleString("en-US", {
+			weekday: "short",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+	};
+
 	return (
 		<PopupModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
 			<div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -44,22 +57,54 @@ const BookingModal = () => {
 
 				<fieldset className="mb-4">
 					<legend className="font-medium mb-2">Available Time Slots</legend>
-					<div className="space-y-2">
-						{selectedDoctor.availability.map((time) => (
-							<div key={time} className="flex items-center">
-								<input
-									type="radio"
-									id={time}
-									name="timeSlot"
-									checked={selectedTime === time}
-									onChange={() => setSelectedTime(time)}
-									className="mr-2"
-								/>
-								<label htmlFor={time}>{new Date(time).toLocaleString()}</label>
+					<div className="space-y-2 max-h-60 overflow-y-auto">
+						{selectedDoctor.availability.map((avail) => (
+							<div key={avail.date} className="mb-4">
+								<h4 className="font-medium mb-2">
+									{new Date(avail.date).toLocaleDateString("en-US", {
+										weekday: "long",
+										month: "long",
+										day: "numeric",
+									})}
+								</h4>
+								<div className="grid grid-cols-2 gap-2">
+									{avail.times.map((time) => {
+										const fullDateTime = `${avail.date}T${time}:00`;
+										const isBooked = isTimeSlotBooked(
+											selectedDoctor.id,
+											fullDateTime,
+										);
+
+										return (
+											<button
+												key={fullDateTime}
+												type="button"
+												onClick={() =>
+													!isBooked && setSelectedTime(fullDateTime)
+												}
+												className={`p-2 border rounded text-sm ${
+													isBooked
+														? "bg-gray-100 text-gray-400 cursor-not-allowed"
+														: selectedTime === fullDateTime
+															? "bg-blue-100 border-blue-500"
+															: "hover:bg-gray-50"
+												}`}
+												aria-label={`Select appointment at ${formatTimeSlot(avail.date, time)}`}
+												disabled={isBooked}
+											>
+												{time}
+												{isBooked ? (
+													<span className="text-xs block">Booked</span>
+												) : null}
+											</button>
+										);
+									})}
+								</div>
 							</div>
 						))}
 					</div>
 				</fieldset>
+
 				<div className="flex justify-end space-x-3">
 					<Button
 						onClick={() => setIsModalOpen(false)}
@@ -71,7 +116,9 @@ const BookingModal = () => {
 					</Button>
 					<Button
 						onClick={handleConfirm}
-						disabled={!selectedTime}
+						disabled={
+							!selectedTime || isTimeSlotBooked(selectedDoctor.id, selectedTime)
+						}
 						className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
 						aria-label="Confirm appointment"
 					>
